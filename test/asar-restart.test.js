@@ -46,7 +46,7 @@ for (const withRuntime of [false, true]) {
     assert.equal(command, "powershell.exe");
     assert.ok(args.includes("-NonInteractive"));
     assert.equal(options.windowsHide, true);
-    assert.equal(options.detached, true);
+    assert.equal(options.detached, false);
     child.emit("error", new Error("spawn denied"));
     child.emit("exit", 1, null);
     t.mock.timers.tick(10000);
@@ -91,7 +91,7 @@ function Start-Process {
   if (-not (Test-Path -LiteralPath ($global:fixtureAsar + '.bak'))) { throw 'backup missing' }
   if ($env:ELECTRON_RUN_AS_NODE) { throw 'Electron would restart in Node mode' }
   if ($env:DSH_PROFILE -ne 'desktop') { throw 'desktop profile missing' }
-  if ($WindowStyle -ne 'Hidden') { throw 'visible helper launch' }
+  if ($WindowStyle -eq 'Hidden') { throw 'interactive desktop must not stay hidden' }
   Add-Content -LiteralPath $global:fixtureTrace -Value 'launch'
 }
 & (Join-Path $env:TEMP 'swap.ps1') -WaitPid 20 -ExePath $global:fixtureExe -AsarPath $global:fixtureAsar
